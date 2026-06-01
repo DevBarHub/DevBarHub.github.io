@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevTool - Error Help Center</title>
+
+<style>
+body{
+    background:#000;
+    color:#00aaff;
+    font-family:"Courier New", monospace;
+    margin:0;
+}
+
+header{
+    text-align:center;
+    padding:50px;
+    border-bottom:3px solid #00aaff;
+}
+
+h1{
+    text-shadow:0 0 10px #00aaff;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:30px;
+}
+
+.error-box{
+    border:2px solid #00aaff;
+    padding:20px;
+    margin-bottom:25px;
+    background:#050505;
+}
+
+.error-title{
+    color:#00d4ff;
+    font-size:24px;
+    margin-bottom:15px;
+}
+
+.code{
+    background:#111;
+    color:#fff;
+    padding:10px;
+    border-left:4px solid #00aaff;
+    margin:15px 0;
+}
+
+ul{
+    color:white;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    border-top:3px solid #00aaff;
+    margin-top:40px;
+    color:white;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <h1>DEVTOOL ERROR HELP CENTER</h1>
+    <p>Find solutions for common DevTool errors.</p>
+</header>
+
+<div class="container">
+
+    <div class="error-box">
+        <div class="error-title">
+            Error Code: (P)
+        </div>
+
+        <div class="code">
+            Error message, Check our website for solutions and to find out why this happens (P)
+        </div>
+
+        <h3>What does this mean?</h3>
+        <p style="color:white;">
+            This is a Permission Error. The command requires permissions
+            that you or the bot do not currently have.
+        </p>
+
+        <h3>Possible Solutions</h3>
+        <ul>
+            <li>Make sure you have the required permissions.</li>
+            <li>Check if DevTool has Administrator permissions.</li>
+            <li>Verify the bot's role is above the target user.</li>
+            <li>Check channel permission overrides.</li>
+        </ul>
+    </div>
+
+    <div class="error-box">
+        <div class="error-title">
+            Error Code: (C/W)
+        </div>
+
+        <div class="code">
+            Error message, Check our website for solutions and to find out why this happens (C/W)
+        </div>
+
+        <h3>What does this mean?</h3>
+        <p style="color:white;">
+            This is a Cooldown Error. The command has been used too recently
+            and must wait before being used again.
+        </p>
+
+        <h3>Possible Solutions</h3>
+        <ul>
+            <li>Wait for the cooldown timer to expire.</li>
+            <li>Do not spam commands repeatedly.</li>
+            <li>Some commands have longer cooldowns than others.</li>
+            <li>Try the command again after a few seconds.</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    <p>© 2026 DevTool Error Documentation</p>
+</footer>
+
+</body>
+  </html>
