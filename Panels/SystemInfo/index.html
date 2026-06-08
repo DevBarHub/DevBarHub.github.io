@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Information Panel</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 20px;
+  background: #f4f6f8;
+  color: #222;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+button {
+  margin-top: 6px;
+  padding: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>System Information Panel</h1>
+
+<div class="grid">
+
+<div class="card">
+<h3>📱 Device</h3>
+<pre id="device"></pre>
+</div>
+
+<div class="card">
+<h3>🌐 Public IP</h3>
+<pre id="ip">Loading...</pre>
+</div>
+
+<div class="card">
+<h3>🧠 System</h3>
+<pre id="system"></pre>
+</div>
+
+<div class="card">
+<h3>🌐 Network</h3>
+<pre id="net"></pre>
+</div>
+
+<div class="card">
+<h3>🖥️ Screen</h3>
+<pre id="screen"></pre>
+</div>
+
+<div class="card">
+<h3>📍 Location</h3>
+<pre id="geo">Not requested</pre>
+</div>
+
+<div class="card">
+<h3>🔋 Battery</h3>
+<pre id="battery"></pre>
+</div>
+
+<div class="card">
+<h3>🎮 GPU</h3>
+<pre id="gpu"></pre>
+</div>
+
+<div class="card">
+<h3>⌨️ Input</h3>
+<pre id="input"></pre>
+</div>
+
+<div class="card">
+<h3>📊 Performance</h3>
+<pre id="perf"></pre>
+</div>
+
+<div class="card">
+<h3>⚙️ Capabilities</h3>
+<pre id="caps"></pre>
+</div>
+
+</div>
+
+<div class="card">
+<button onclick="exportReport()">Export JSON Report</button>
+</div>
+
+<script>
+
+let keys = [];
+let lastInput = "none";
+let fps = 0;
+let frameCount = 0;
+let lastTime = performance.now();
+
+// ⌨️ INPUT
+document.addEventListener("keydown", e => {
+  keys.push(e.key);
+  if(keys.length > 30) keys.shift();
+
+  lastInput = "keyboard";
+  updateInput();
+});
+
+document.addEventListener("mousemove", () => {
+  lastInput = "mouse";
+  updateInput();
+});
+
+document.addEventListener("touchstart", () => {
+  lastInput = "touch";
+  updateInput();
+});
+
+function updateInput(){
+  document.getElementById("input").textContent =
+`Last input: ${lastInput}
+Keys: ${keys.join(", ")}`;
+}
+
+// 📱 DEVICE TYPE + NAME
+function device(){
+  const touch = ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  const ua = navigator.userAgent.toLowerCase();
+
+  let name = "Unknown device";
+
+  if(/iphone/.test(ua)) name = "iPhone";
+  else if(/ipad/.test(ua)) name = "iPad";
+  else if(/android/.test(ua)) name = "Android device";
+  else if(touch && window.innerWidth > 768) name = "Touch laptop / hybrid";
+  else if(touch) name = "Touch device";
+  else name = "Desktop computer";
+
+  document.getElementById("device").textContent =
+`Type: ${name}
+Touch: ${touch}`;
+}
+
+// 🌐 IP
+async function ip(){
+  try {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    document.getElementById("ip").textContent = data.ip;
+  } catch {
+    document.getElementById("ip").textContent = "Unavailable";
+  }
+}
+
+// 🧠 SYSTEM
+function system(){
+  document.getElementById("system").textContent =
+`CPU cores: ${navigator.hardwareConcurrency || "N/A"}
+RAM: ${navigator.deviceMemory || "N/A"} GB
+Platform: ${navigator.platform}
+Language: ${navigator.language}
+Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
+}
+
+// 🌐 NETWORK
+function net(){
+  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+  document.getElementById("net").textContent =
+`Online: ${navigator.onLine}
+Type: ${c ? c.effectiveType : "N/A"}
+Downlink: ${c ? c.downlink : "N/A"} Mbps
+RTT: ${c ? c.rtt : "N/A"} ms`;
+}
+
+// 🖥️ SCREEN
+function screenInfo(){
+  document.getElementById("screen").textContent =
+`Resolution: ${screen.width}x${screen.height}
+Available: ${screen.availWidth}x${screen.availHeight}
+Pixel ratio: ${window.devicePixelRatio}`;
+}
+
+// 📍 GEOLOCATION
+function geo(){
+  navigator.geolocation?.getCurrentPosition(
+    pos => {
+      document.getElementById("geo").textContent =
+`Lat: ${pos.coords.latitude}
+Lon: ${pos.coords.longitude}
+Accuracy: ${pos.coords.accuracy}m`;
+    },
+    () => {
+      document.getElementById("geo").textContent = "Denied";
+    }
+  );
+}
+
+// 🔋 BATTERY
+function battery(){
+  if(!navigator.getBattery){
+    document.getElementById("battery").textContent = "Not supported";
+    return;
+  }
+
+  navigator.getBattery().then(b => {
+    function update(){
+      document.getElementById("battery").textContent =
+`Level: ${Math.round(b.level*100)}%
+Charging: ${b.charging}`;
+    }
+    update();
+    b.onlevelchange = update;
+    b.onchargingchange = update;
+  });
+}
+
+// 🎮 GPU
+function gpu(){
+  try {
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl");
+
+    if(!gl){
+      document.getElementById("gpu").textContent = "No WebGL";
+      return;
+    }
+
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+
+    let renderer = ext ?
+      gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) :
+      "Hidden";
+
+    document.getElementById("gpu").textContent =
+`Renderer: ${renderer}`;
+
+  } catch {
+    document.getElementById("gpu").textContent = "Error";
+  }
+}
+
+// ⚙️ CAPABILITIES
+function caps(){
+  document.getElementById("caps").textContent =
+`Geolocation: ${"geolocation" in navigator}
+Notifications: ${"Notification" in window}
+Clipboard: ${!!navigator.clipboard}
+LocalStorage: ${!!localStorage}
+ServiceWorker: ${"serviceWorker" in navigator}
+WebGL: ${!!window.WebGLRenderingContext}`;
+}
+
+// 📊 FPS
+function loop(){
+  frameCount++;
+  const now = performance.now();
+
+  if(now - lastTime >= 1000){
+    fps = frameCount;
+    frameCount = 0;
+    lastTime = now;
+
+    document.getElementById("perf").textContent =
+`FPS: ${fps}`;
+  }
+
+  requestAnimationFrame(loop);
+}
+
+// 💾 EXPORT
+function exportReport(){
+  const report = {
+    device: document.getElementById("device").textContent,
+    system: document.getElementById("system").textContent,
+    network: document.getElementById("net").textContent,
+    screen: document.getElementById("screen").textContent,
+    battery: document.getElementById("battery").textContent,
+    gpu: document.getElementById("gpu").textContent,
+    input: keys
+  };
+
+  const blob = new Blob([JSON.stringify(report, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "system_report.json";
+  a.click();
+}
+
+// INIT
+device();
+ip();
+system();
+net();
+screenInfo();
+geo();
+battery();
+gpu();
+caps();
+loop();
+
+setInterval(net, 3000);
+
+</script>
+
+</body>
+  </html>
