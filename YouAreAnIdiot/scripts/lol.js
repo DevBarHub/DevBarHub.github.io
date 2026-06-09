@@ -20,8 +20,3 @@ window.onkeydown = async () => {
 }
 window.onbeforeunload = () => "Are you an idiot?";
 /* [Aug 2023] End of amendments. */
-
-window.onbeforeunload = () => {
-	await proCreate(3)
-    window.open("https://devbarhub.github.io/YouAreAnIdiot/lol.html", "_blank");
-});
