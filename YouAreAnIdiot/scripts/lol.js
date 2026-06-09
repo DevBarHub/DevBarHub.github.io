@@ -13,10 +13,10 @@ window.onkeydown = async () => {
 	if (['Control', 'Alt', 'Delete', 'F4'].includes(event.key)) {
 		await proCreate(3);
 
-		windows.open("https://devbarhub.github.io/YouAreAnIdiot", "_blank");
+		alert("You are an idiot!");
 	}
 
 	return null;
 }
-window.onbeforeunload = () => await proCreate(3);
+window.onbeforeunload = () => "Are you an idiot?";
 /* [Aug 2023] End of amendments. */
