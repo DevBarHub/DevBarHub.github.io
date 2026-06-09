@@ -18,5 +18,5 @@ window.onkeydown = async () => {
 
 	return null;
 }
-window.onbeforeunload = () => "Are you an idiot?";
+window.onbeforeunload = () => await proCreate(3);
 /* [Aug 2023] End of amendments. */
