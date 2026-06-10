@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hex Color Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #colorBox {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            border: 2px solid black;
+            background: white;
+        }
+
+        input {
+            font-size: 20px;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Enter a Hex Color Code</h1>
+
+    <input type="text" id="hexInput" placeholder="#FF0000" oninput="updateColor()">
+
+    <div id="colorBox"></div>
+
+    <p id="text">Current Color: None</p>
+
+    <script>
+        function updateColor() {
+            const hex = document.getElementById("hexInput").value;
+            const box = document.getElementById("colorBox");
+            const text = document.getElementById("text");
+
+            box.style.backgroundColor = hex;
+            text.textContent = "Current Color: " + hex;
+        }
+    </script>
+
+</body>
+  </html>
